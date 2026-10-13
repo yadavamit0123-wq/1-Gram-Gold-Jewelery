@@ -32,3 +32,12 @@ flutter build apk --release
 ```
 
 `android/key.properties` and `*.jks` are gitignored — commit mat karna.
+
+## GitHub Actions
+
+Workflow: `.github/workflows/android-release.yml`
+
+- **Trigger:** push to `main`, ya **Actions → Android APK & AAB → Run workflow**
+- **Output:** Artifacts `release-aab` aur `release-apk` (30 din)
+
+Pehle repo mein ye file commit + push karo; secrets set hone ke baad build auto chalegi.
