@@ -154,7 +154,10 @@ class OrderProvider extends ChangeNotifier {
         );
       }
     } catch (e) {
-      _addressError = 'Failed to load addresses';
+      _addressError = e.toString().replaceFirst('ApiException: ', '');
+      if (_addressError!.isEmpty) {
+        _addressError = 'Failed to load addresses';
+      }
     } finally {
       _isLoadingAddresses = false;
       notifyListeners();

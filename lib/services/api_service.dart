@@ -36,6 +36,8 @@ class ApiService {
     final token = storage.getAuthToken();
     if (token != null && token.isNotEmpty) {
       headers['Authorization'] = 'Bearer $token';
+      // Shared hosting (cPanel) often drops Authorization; backend also reads this header.
+      headers['X-Access-Token'] = token;
     } else if (requireAuth) {
       throw ApiException('Please log in to continue', statusCode: 401);
     }

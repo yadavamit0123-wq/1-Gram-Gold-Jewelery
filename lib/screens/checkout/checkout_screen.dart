@@ -197,6 +197,21 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           ],
         ),
         const SizedBox(height: 12),
+        if (orderProvider.addressError != null) ...[
+          Container(
+            width: double.infinity,
+            margin: const EdgeInsets.only(bottom: 12),
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFEE2E2),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              orderProvider.addressError!,
+              style: const TextStyle(color: AppColors.error, fontSize: 13),
+            ),
+          ),
+        ],
         if (addresses.isEmpty) ...[
           Container(
             padding: const EdgeInsets.all(20),

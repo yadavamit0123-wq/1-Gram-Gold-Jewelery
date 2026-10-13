@@ -8,6 +8,11 @@
 
 ## Repo secrets (GitHub → Settings → Secrets)
 
+**Path:** `https://github.com/yadavamit0123-wq/1-Gram-Gold-Jewelery/settings/secrets/actions`  
+Tab: **Repository secrets** (Environment secrets par mat rakho jab tak workflow mein `environment:` na ho).
+
+Names **exactly** (copy-paste):
+
 | Secret | Example |
 |--------|---------|
 | `ANDROID_KEYSTORE_BASE64` | Base64 of your `.jks` file |

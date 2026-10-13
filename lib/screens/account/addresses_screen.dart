@@ -164,8 +164,17 @@ class _AddressesScreenState extends State<AddressesScreen> {
 
                             final nav = Navigator.of(context);
                             final ok = await orderProvider.saveAddress(newAddr);
+                            if (!context.mounted) return;
                             if (ok) {
                               nav.pop();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Delivery address saved')),
+                              );
+                            } else {
+                              final msg = orderProvider.addressError ?? 'Could not save address. Please try again.';
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(msg)),
+                              );
                             }
                           },
                           child: const Text('Save Address'),
