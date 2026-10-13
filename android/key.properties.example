@@ -1,0 +1,7 @@
+# Copy to android/key.properties (never commit key.properties or .jks)
+# For GitHub Actions: store these as repository secrets and write key.properties in CI.
+
+storePassword=YOUR_STORE_PASSWORD
+keyPassword=YOUR_KEY_PASSWORD
+keyAlias=YOUR_KEY_ALIAS
+storeFile=upload-keystore.jks
