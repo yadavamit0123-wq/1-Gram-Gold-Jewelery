@@ -41,3 +41,26 @@ Workflow: `.github/workflows/android-release.yml`
 - **Output:** Artifacts `release-aab` aur `release-apk` (30 din)
 
 Pehle repo mein ye file commit + push karo; secrets set hone ke baad build auto chalegi.
+
+### `signReleaseBundle` — keystore password was incorrect
+
+Gradle tak build chal jaye aur sirf signing par fail ho, to **GitHub secrets local `android/key.properties` se match nahi kar rahe**, ya base64 **alag `.jks`** file ka hai.
+
+1. Local pe verify (Mac):
+
+```bash
+cd "/Users/amityadav/Projects/1 Gram Gold All/1-Gram-Gold-Jewelery"
+keytool -list -keystore android/upload-keystore.jks -alias upload
+```
+
+Jo **store password** aur **alias** yahan chale, wahi `ANDROID_STORE_PASSWORD` aur `ANDROID_KEY_ALIAS` secrets mein daalo. `ANDROID_KEY_PASSWORD` usually same as store password.
+
+2. Base64 **usi** file se banao jo local signing mein use karti ho:
+
+```bash
+base64 -i android/upload-keystore.jks | tr -d '\n' | pbcopy
+```
+
+GitHub → **ANDROID_KEYSTORE_BASE64** secret **Update** (purana hata ke naya paste). Secret value ke aage–peeche space/newline mat chhodo.
+
+3. Workflow dubara **Run workflow** — ab signing se pehle `keytool` step galat password/alias par turant fail karega.

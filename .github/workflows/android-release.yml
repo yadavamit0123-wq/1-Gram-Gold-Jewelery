@@ -40,17 +40,29 @@ jobs:
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
         run: |
-          if [ -z "$ANDROID_KEYSTORE_BASE64" ]; then
+          set -euo pipefail
+          for name in ANDROID_STORE_PASSWORD ANDROID_KEY_PASSWORD ANDROID_KEY_ALIAS; do
+            if [ -z "${!name:-}" ]; then
+              echo "::error::Missing secret $name"
+              exit 1
+            fi
+          done
+          if [ -z "${ANDROID_KEYSTORE_BASE64:-}" ]; then
             echo "::error::Missing secret ANDROID_KEYSTORE_BASE64"
             exit 1
           fi
-          echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > android/upload-keystore.jks
-          cat > android/key.properties <<EOF
-          storePassword=$ANDROID_STORE_PASSWORD
-          keyPassword=$ANDROID_KEY_PASSWORD
-          keyAlias=$ANDROID_KEY_ALIAS
-          storeFile=upload-keystore.jks
-          EOF
+          printf '%s' "$ANDROID_KEYSTORE_BASE64" | tr -d '\n\r' | base64 -d > android/upload-keystore.jks
+          if ! keytool -list -keystore android/upload-keystore.jks \
+            -storepass "$ANDROID_STORE_PASSWORD" -alias "$ANDROID_KEY_ALIAS" >/dev/null 2>&1; then
+            echo "::error::Keystore decode OK but store password or key alias is wrong. Match local android/key.properties and re-upload ANDROID_KEYSTORE_BASE64 from the same .jks file."
+            exit 1
+          fi
+          {
+            printf 'storePassword=%s\n' "$ANDROID_STORE_PASSWORD"
+            printf 'keyPassword=%s\n' "$ANDROID_KEY_PASSWORD"
+            printf 'keyAlias=%s\n' "$ANDROID_KEY_ALIAS"
+            printf 'storeFile=%s\n' 'upload-keystore.jks'
+          } > android/key.properties
 
       - name: Install dependencies
         run: flutter pub get
